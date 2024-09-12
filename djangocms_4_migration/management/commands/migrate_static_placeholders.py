@@ -131,14 +131,10 @@ def _create_alias_content(alias, name, language, user, state=PUBLISHED):
         language=language,
     )
 
-    logger.error(alias_content.__dict__)
-
     try:
         Version.objects.create(content=alias_content, created_by=user, state=state)
     except IntegrityError:
-        logger.error(f'Failed to create Version for AliasContent {alias_content}')
-        alias_content.delete()
-        return None
+        logger.warn(f'Failed to create Version for AliasContent {alias_content}')
 
     logger.info(f'Created AliasContent {alias_content}')
 
