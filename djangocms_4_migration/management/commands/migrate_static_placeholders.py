@@ -130,7 +130,12 @@ def _create_alias_content(alias, name, language, user, state=PUBLISHED):
         language=language,
     )
 
-    Version.objects.create(content=alias_content, created_by=user, state=state)
+    try:
+        Version.objects.create(content=alias_content, created_by=user, state=state)
+    except IntegrityError:
+        logger.error(f'Failed to create Version for AliasContent {alias_content}')
+        alias_content.delete()
+        return None
 
     logger.info(f'Created AliasContent {alias_content}')
 
@@ -155,6 +160,10 @@ def _remap_static_placeholder_plugins_to_static_alias(static_placeholder_id, sta
 
         plugin_set = plugin_language_groups[language]
         alias_content = _create_alias_content(alias, static_placeholder_code, language, migration_user, version_state)
+        
+        if not alias_content:
+            continue
+
         alias_placeholder_id = alias_content.placeholder.id
 
         # Move the plugins into the Alias
