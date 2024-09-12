@@ -131,6 +131,8 @@ def _create_alias_content(alias, name, language, user, state=PUBLISHED):
         language=language,
     )
 
+    logger.error(alias_content.__dict__)
+
     try:
         Version.objects.create(content=alias_content, created_by=user, state=state)
     except IntegrityError:
