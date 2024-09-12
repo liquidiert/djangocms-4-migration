@@ -5,6 +5,7 @@ import re
 
 from itertools import chain
 
+from django.db import IntegrityError
 from django.core.management.base import BaseCommand
 
 from cms.models import CMSPlugin, Placeholder, StaticPlaceholder
